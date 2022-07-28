@@ -178,6 +178,11 @@ def NYSE_tradingdays(
 
 if __name__ == '__main__':
     # Examples
+    # List all NYSE holiday observances for 2020
+    print("\nNYSE Holidays in 2020")
+    for dy in NYSE_holidays(datetime.date(2020, 1, 1), datetime.date(2020, 12, 31)):
+        print(dy.strftime('%b %d %Y'))
+
     # List all NYSE holiday observances for 2021
     print("\nNYSE Holidays in 2021")
     for dy in NYSE_holidays(datetime.date(2021, 1, 1), datetime.date(2021, 12, 31)):
