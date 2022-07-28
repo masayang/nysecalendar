@@ -6,9 +6,18 @@ import datetime
 
 def NYSE_holidays(
         a=datetime.date.today(),
-        b=datetime.date.today()+datetime.timedelta(days=365)):
+        b=datetime.date.today()+datetime.timedelta(days=365),
+        includeing_weekend=False):
     rs = rrule.rruleset()
     # Include all potential holiday observances
+
+    if includeing_weekend:
+        rs.rrule(rrule.rrule(
+            rrule.DAILY,
+            dtstart=a,
+            until=b,
+            byweekday=(rrule.SA, rrule.SU)
+        ))
 
     rs.rrule(rrule.rrule(
         rrule.YEARLY,
@@ -151,17 +160,16 @@ def NYSE_holidays(
             bymonthday=30))  # Hurricane Sandy
 
     # Exclude potential holidays that fall on weekends
-    rs.exrule(rrule.rrule(
-        rrule.WEEKLY,
-        dtstart=a,
-        until=b,
-        byweekday=(rrule.SA, rrule.SU)))
+    if not includeing_weekend:
+        rs.exrule(rrule.rrule(
+            rrule.WEEKLY,
+            dtstart=a,
+            until=b,
+            byweekday=(rrule.SA, rrule.SU)))
 
     return rs
 
 # Generate ruleset for NYSE trading days
-
-
 def NYSE_tradingdays(
         a=datetime.date.today(),
         b=datetime.date.today()+datetime.timedelta(days=365)):
@@ -184,6 +192,12 @@ if __name__ == '__main__':
     print("\nNYSE Holidays in 2022")
     for dy in NYSE_holidays(datetime.date(2022, 1, 1), datetime.date(2022, 12, 31)):
         print(dy.strftime('%b %d %Y'))
+    print("\n")
+
+    print("\nNYSE Holidays in 2022 includeing weekends")
+    for dy in NYSE_holidays(datetime.date(2022, 1, 1), datetime.date(2022, 12, 31), includeing_weekend=True):
+        print(dy.strftime('%b %d %Y'))
+    print("\n")
 
     # List all NYSE trading days in 2022
     trading_days = sorted(list(NYSE_tradingdays(
